@@ -1,7 +1,5 @@
 ---
-title: "avaliweb"
+title: "Ava Li"
 ---
 
-This is a Quarto website.
-
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+Hello! I'm Ava Li, a sophomore at Scripps College studying Public Policy, Economics, and Data Science.
