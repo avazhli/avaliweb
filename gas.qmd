@@ -83,20 +83,6 @@ weekly_gas |>
     title = "Prices by Formulation", x = "Date", y= "Price",  color = "Formulation" )
 ```
 
-Price Spread ????
-```{r}
-weekly_gas|> 
-  filter(grade == "premium" | grade == "regular") |> 
-  select(date, grade, price) |> 
-  pivot_wider(names_frome = grade, values_from=price) |> 
-  mutate(price_spread = premium - regular) |> 
-  ggplot( aes(x=date, y=price, color=grade)) +
-    geom_line() + 
-    facet_wrap(~grade) + 
-    labs(title = "Prices for Diesel")
-```
-
-
 Volatility/Price distribution
 ```{r}
 ggplot(weekly_gas, aes(x=price, color = fuel)) +
@@ -109,27 +95,4 @@ ggplot(weekly_gas, aes(x=price, color = grade)) +
     geom_boxplot() + 
     facet_wrap(~fuel) +
     labs(title = "Distribution of Price Changes by Grade")
-```
-
-???
-Seasonality
-```{r}
-weekly_gas |> 
-  group_by(year,month) |> 
-  summarize(price=mean(price), .groups="drop") |> 
-  ggplot( aes(month, factor(year), fill=price)) +
-     geom_tile(color = "white") +
-      labs(title = "Distribution of Price Changes by Grade")
-```
-
-???
-correlation
-```{r}
-weekly_gas |> 
-  filter(grade == "all") |> 
-  select(date, gasoline = price) |> 
-  inner_join(diesel |> select(date,diesel=price),by="date") |> 
-  mutate(year = year(date)) |> 
-    ggplot(aes(gasoline,diesel,color = year)) +
-    geom_point()
 ```

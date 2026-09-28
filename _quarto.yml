@@ -11,10 +11,10 @@ website:
       - about.qmd
       - text: "Data Viz"
         menu:
-          - text: ""
-            href: docs/gas.html
-          - text: ""
-            href: 
+          - text: "NSF Grants"
+            href: nsf.qmd
+          - text: "U.S. Gas Prices"
+            href: gas.qmd
 
 
 format:

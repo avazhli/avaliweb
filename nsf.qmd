@@ -87,19 +87,6 @@ nsf |>
 nsf |> 
     group_by(org_state) |> 
     summarize(num = n()) |> 
-    ggplot(aes(x=num,y = fct_reorder(org_state, num)))+
-        geom_col(fill = "#2c7fb8") +
-        labs(
-            title = "NSF Grant Terminations by State",
-            x = "Number of Grants Terminated",
-            y = NULL
-        ) +
-        theme_minimal()
-```
-```{r}
-nsf |> 
-    group_by(org_state) |> 
-    summarize(num = n()) |> 
     arrange(desc(num)) |> 
     slice_head(n = 16) |> 
     ggplot(aes(x=num,y = fct_reorder(org_state, num)))+
@@ -113,6 +100,61 @@ nsf |>
         theme_minimal()
 ```
 
+```{r}
+nsf |> 
+    group_by(org_name) |> 
+    summarize(num = n()) |> 
+    filter(num>9) |> 
+    ggplot(aes(x=num,y = fct_reorder(org_name, num)))+
+        geom_col(fill = "#2c7fb8") +
+        labs(
+            title = "NSF Grant Terminations by Organization",
+            subtitle = "10 or more terminations",
+            x = "Number of Grants Terminated",
+            y = NULL
+        ) +
+        theme_minimal()
+```
+
+```{r}
+top_orgs <- nsf |>
+  filter(!is.na(org_name), !is.na(usaspending_obligated)) |>
+  group_by(org_name) |>
+  summarize(total_dollars = sum(usaspending_obligated)) |>
+  arrange(desc(total_dollars)) |>
+  slice_head(n = 15)
+
+ggplot(top_orgs, aes(x = total_dollars, y = fct_reorder(org_name, total_dollars))) +
+  geom_col(fill = "#d95f0e") +
+  scale_x_continuous(labels = scales::label_dollar(scale = 1e-6, suffix = "M")) +
+  labs(
+    title = "Organizations with the most NSF funding terminated",
+    x = "Total obligated dollars",
+    y = NULL
+  ) +
+  theme_minimal()
+```
+
+```{r}
+org_summary <- nsf |>
+  filter(!is.na(org_name), !is.na(usaspending_obligated)) |>
+  group_by(org_name) |>
+  summarize(
+    n_terminations = n(),
+    total_dollars = sum(usaspending_obligated)
+  )
+
+ggplot(org_summary, aes(x = n_terminations, y = total_dollars)) +
+  geom_point(alpha = 0.6, color = "#2c7fb8") +
+  scale_x_log10() +
+  scale_y_log10(labels = scales::label_dollar(scale = 1e-6, suffix = "M")) +
+  labs(
+    title = "Terminated grants vs. dollars, by organization",
+    x = "Number of terminated grants (log scale)",
+    y = "Total obligated dollars (log scale)"
+  ) +
+  theme_minimal()
+```
 ```{r}
 nsf |> 
     group_by(org_district) |> 
@@ -150,51 +192,3 @@ ggplot(nsf, aes(x=termination_letter_date, y=usaspending_obligated)) +
     geom_point()
 ```
 
-
-
-```{r}
-weekly <- nsf |> 
-    filter(!is.na(termination_letter_date)) |> 
-    mutate(week = floor_date(termination_letter_date, 
-    unit = "week")) |> 
-    group_by(week) |> 
-    summarize(n_terminations = n())
-ggplot(weekly, aes(x=week, y=n_terminations)) +
-    geom_line() +
-    geom_point()+
-    labs(title = "NSF Grant Terminations Per Week")
-```
-
-```{r}
-cumulative <- nsf |>
-  filter(!is.na(termination_letter_date), !is.na(usaspending_obligated)) |>
-  group_by(termination_letter_date) |>
-  summarize(daily_dollars = sum(usaspending_obligated)) |>
-  arrange(termination_letter_date) |>
-  mutate(cumulative_dollars = cumsum(daily_dollars))
-
-ggplot(cumulative, aes(x = termination_letter_date, y = cumulative_dollars)) +
-  geom_step(color = "#d95f0e", linewidth = 0.9) +
-  scale_y_continuous(labels = scales::label_dollar(scale = 1e-6, suffix = "M")) +
-  labs(
-    title = "Cumulative NSF funding terminated",
-    subtitle = "Running total of obligated dollars, by termination letter date",
-    x = NULL,
-    y = "Cumulative obligated dollars"
-  )
-```
-```{r}
-weekly_gas |> 
-  filter(fuel == "gasoline") |> 
-  ggplot(aes(x=date, y=price, color=grade)) +
-    geom_line() + 
-    facet_wrap(~grade) + 
-    labs(title = "Prices for Gasoline")
-```
-
-Time Trends
-```{r}
-ggplot(nsf, aes(x=termination_letter_date)) +
-    geom_line()
-
-```
