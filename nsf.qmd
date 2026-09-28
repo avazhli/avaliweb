@@ -11,7 +11,6 @@ format: html
 library(tidyverse)
 library(openintro)
 ```
-
 ```{r}
 nsf_terminations <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-05-06/nsf_terminations.csv')
 
@@ -26,11 +25,171 @@ The data was collected by Grant Watch through crowdsourcing from researchers and
 
 The dataset includes information on grants for scientific research and education projects from the U.S. National Science Foundation (NSF) that have been terminated by the Trump administration in 2025.
 
+```{r}
+nsf |> 
+    group_by(termination_letter_date) |> 
+    summarize(num_perday = n()) |> 
+    ggplot(aes(x=termination_letter_date,
+        y=num_perday)) +
+        geom_line() +
+        geom_point() +
+        labs(
+            title = "NSF Grant Terminations Per Day",
+            x = "Termination date",
+            y = "Number of terminated grants")
+```
+```{r}
+nsf |> 
+    group_by(termination_letter_date) |> 
+    summarize(num_perday = n()) |> 
+    ggplot(aes(x=termination_letter_date,
+        y=num_perday)) +
+        geom_col() +
+        labs(
+            title = "NSF Grant Terminations Per Day",
+            x = "Termination date",
+            y = "Number of terminated grants")
+```
 
 ```{r}
-nsf <- nsf |> 
-    group_by(termination_letter_date) |> 
-    summarize(num = n())
+nsf |> 
+    filter(!is.na(division)) |> 
+    group_by(division) |>
+    summarize(num = n()) |> 
+    filter(num > 1) |> 
+    ggplot(aes(x=num,y = fct_reorder(division, num)))+
+        geom_col(fill = "#c84545") +
+        labs(
+            title = "NSF Grant Terminations by Division",
+            x = "Number of Grants Terminated",
+            y = NULL
+        ) +
+        theme_minimal()
+```
+
+```{r}
+nsf |> 
+    filter(!is.na(directorate)) |> 
+    group_by(directorate) |>
+    summarize(num = n()) |> 
+    ggplot(aes(x=num,y = fct_reorder(directorate, num)))+
+        geom_col(fill = "#c84545") +
+        labs(
+            title = "NSF Grant Terminations by Directorate",
+            subtitle = "the NSF organization that administered the grant ",
+            x = "Number of Grants Terminated",
+            y = NULL
+        ) +
+        theme_minimal()
+```
+
+```{r}
+nsf |> 
+    group_by(org_state) |> 
+    summarize(num = n()) |> 
+    ggplot(aes(x=num,y = fct_reorder(org_state, num)))+
+        geom_col(fill = "#2c7fb8") +
+        labs(
+            title = "NSF Grant Terminations by State",
+            x = "Number of Grants Terminated",
+            y = NULL
+        ) +
+        theme_minimal()
+```
+```{r}
+nsf |> 
+    group_by(org_state) |> 
+    summarize(num = n()) |> 
+    arrange(desc(num)) |> 
+    slice_head(n = 16) |> 
+    ggplot(aes(x=num,y = fct_reorder(org_state, num)))+
+        geom_col(fill = "#2c7fb8") +
+        labs(
+            title = "NSF Grant Terminations by State",
+            subtitle = "Top 16 States",
+            x = "Number of Grants Terminated",
+            y = NULL
+        ) +
+        theme_minimal()
+```
+
+```{r}
+nsf |> 
+    group_by(org_district) |> 
+    summarize(num = n()) |> 
+    arrange(desc(num)) |> 
+    slice_head(n = 20) |> 
+    ggplot(aes(x=num,y = fct_reorder(org_district, num)))+
+        geom_col(fill = "#b8622c") +
+        labs(
+            title = "NSF Grant Terminations by District",
+            subtitle = "Top 20 Districts",
+            x = "Number of Grants Terminated",
+            y = NULL
+        ) +
+        theme_minimal()
+```
+
+```{r}
+nsf |> 
+    group_by(award_type) |> 
+    summarize(num_term = n()) |> 
+    mutate(perc = num_term/sum(num_term)) |> 
+    ggplot(aes(x="",y = num_term, fill = award_type)) +
+        geom_col() +
+        coord_polar(theta = "y") +
+        labs(
+            title = "NSF Terminations by Award Type",
+            fill = "Award Type"
+        ) +
+    theme_void()
+```
+
+```{r}
+ggplot(nsf, aes(x=termination_letter_date, y=usaspending_obligated)) +
+    geom_point()
+```
+
+
+
+```{r}
+weekly <- nsf |> 
+    filter(!is.na(termination_letter_date)) |> 
+    mutate(week = floor_date(termination_letter_date, 
+    unit = "week")) |> 
+    group_by(week) |> 
+    summarize(n_terminations = n())
+ggplot(weekly, aes(x=week, y=n_terminations)) +
+    geom_line() +
+    geom_point()+
+    labs(title = "NSF Grant Terminations Per Week")
+```
+
+```{r}
+cumulative <- nsf |>
+  filter(!is.na(termination_letter_date), !is.na(usaspending_obligated)) |>
+  group_by(termination_letter_date) |>
+  summarize(daily_dollars = sum(usaspending_obligated)) |>
+  arrange(termination_letter_date) |>
+  mutate(cumulative_dollars = cumsum(daily_dollars))
+
+ggplot(cumulative, aes(x = termination_letter_date, y = cumulative_dollars)) +
+  geom_step(color = "#d95f0e", linewidth = 0.9) +
+  scale_y_continuous(labels = scales::label_dollar(scale = 1e-6, suffix = "M")) +
+  labs(
+    title = "Cumulative NSF funding terminated",
+    subtitle = "Running total of obligated dollars, by termination letter date",
+    x = NULL,
+    y = "Cumulative obligated dollars"
+  )
+```
+```{r}
+weekly_gas |> 
+  filter(fuel == "gasoline") |> 
+  ggplot(aes(x=date, y=price, color=grade)) +
+    geom_line() + 
+    facet_wrap(~grade) + 
+    labs(title = "Prices for Gasoline")
 ```
 
 Time Trends
