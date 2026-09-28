@@ -1,0 +1,135 @@
+---
+title: "U.S. Weekly Gas Prices"
+description: Analysis of weekly gas prices data from TidyTuesday
+author: Ava Li
+datE: September 27, 2026
+format: html
+---
+```{r}
+#| echo: false
+library(tidyverse)
+library(openintro)
+```
+```{r}
+weekly_gas_prices <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-07-01/weekly_gas_prices.csv')
+
+weekly_gas <- weekly_gas_prices
+```
+
+## The Data
+Retrieved from TidyTuesday:
+https://github.com/rfordatascience/tidytuesday/tree/main/data/2025/2025-07-01
+
+The data is originally from the U.S. Energy Information Adminitrastion (EIA)
+
+This week we're exploring weekly US gas prices! The data comes from the U.S. Energy Information Administration (EIA), which publishes average retail gasoline and diesel prices each Monday. The original data (including additional datasets) can be found at eia.gov/petroleum/gasdiesel, and the weekly time series used here was downloaded from this XLS file.
+
+Prices over time basic comparison
+```{r}
+ggplot(weekly_gas, aes(x=date, y=price, color=fuel)) +
+  geom_line() + 
+  labs(title = "Fuel Price Overtime")
+```
+
+```{r}
+ggplot(weekly_gas, aes(x=date, y=price, color=fuel)) +
+  geom_line() + 
+  facet_wrap(~fuel) + 
+  labs(title = "Fuel Price Overtime by Fuel")
+```
+
+Prices by Grade (ALL)
+```{r}
+ggplot(weekly_gas, aes(x=date, y=price, color=grade)) +
+  geom_line() + 
+  facet_wrap(~grade) +
+  labs( title = "Price by Grade")
+```
+
+```{r}
+ggplot(weekly_gas, aes(x=date, y=price, color=grade)) +
+  geom_line() + 
+  facet_grid(~grade) + 
+  labs(title = "Price by Grade")
+```
+
+Prices by Fuel Type and Grade
+```{r}
+weekly_gas |> 
+  filter(fuel == "gasoline") |> 
+  ggplot(aes(x=date, y=price, color=grade)) +
+    geom_line() + 
+    facet_wrap(~grade) + 
+    labs(title = "Prices for Gasoline")
+```
+
+```{r}
+weekly_gas|> 
+  filter(fuel == "diesel") |> 
+  ggplot( aes(x=date, y=price, color=grade)) +
+    geom_line() + 
+    facet_wrap(~grade) + 
+    labs(title = "Prices for Diesel")
+```
+
+Prices by Formulation of Gasoline
+```{r}
+weekly_gas |> 
+  filter(fuel == "gasoline") |> 
+  ggplot(aes(x=date, y=price, color=formulation)) +
+    geom_line() + 
+    facet_wrap(~grade) + 
+    labs(
+    title = "Prices by Formulation", x = "Date", y= "Price",  color = "Formulation" )
+```
+
+Price Spread ????
+```{r}
+weekly_gas|> 
+  filter(grade == "premium" | grade == "regular") |> 
+  select(date, grade, price) |> 
+  pivot_wider(names_frome = grade, values_from=price) |> 
+  mutate(price_spread = premium - regular) |> 
+  ggplot( aes(x=date, y=price, color=grade)) +
+    geom_line() + 
+    facet_wrap(~grade) + 
+    labs(title = "Prices for Diesel")
+```
+
+
+Volatility/Price distribution
+```{r}
+ggplot(weekly_gas, aes(x=price, color = fuel)) +
+    geom_histogram() + 
+    labs(title = "Distribution of Price Changes by Fuel")
+```
+
+```{r}
+ggplot(weekly_gas, aes(x=price, color = grade)) +
+    geom_boxplot() + 
+    facet_wrap(~fuel) +
+    labs(title = "Distribution of Price Changes by Grade")
+```
+
+???
+Seasonality
+```{r}
+weekly_gas |> 
+  group_by(year,month) |> 
+  summarize(price=mean(price), .groups="drop") |> 
+  ggplot( aes(month, factor(year), fill=price)) +
+     geom_tile(color = "white") +
+      labs(title = "Distribution of Price Changes by Grade")
+```
+
+???
+correlation
+```{r}
+weekly_gas |> 
+  filter(grade == "all") |> 
+  select(date, gasoline = price) |> 
+  inner_join(diesel |> select(date,diesel=price),by="date") |> 
+  mutate(year = year(date)) |> 
+    ggplot(aes(gasoline,diesel,color = year)) +
+    geom_point()
+```

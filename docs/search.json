@@ -19,5 +19,19 @@
     "title": "About",
     "section": "",
     "text": "Scripps College | Claremont, CA | Aug. 2025 - May 2029\nB.A. in Public Policy and Economics; Minor in Data Science\n::"
+  },
+  {
+    "objectID": "gas.html",
+    "href": "gas.html",
+    "title": "U.S. Weekly Gas Prices",
+    "section": "",
+    "text": "&lt;!–\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.2.1     ✔ readr     2.2.0\n✔ forcats   1.0.1     ✔ stringr   1.6.0\n✔ ggplot2   4.0.3     ✔ tibble    3.3.1\n✔ lubridate 1.9.5     ✔ tidyr     1.3.2\n✔ purrr     1.2.2     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\nLoading required package: airports\n\nLoading required package: cherryblossom\n\nLoading required package: usdata\nweekly_gas_prices &lt;- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-07-01/weekly_gas_prices.csv')\n\nRows: 22360 Columns: 5\n── Column specification ────────────────────────────────────────────────────────\nDelimiter: \",\"\nchr  (3): fuel, grade, formulation\ndbl  (1): price\ndate (1): date\n\nℹ Use `spec()` to retrieve the full column specification for this data.\nℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.\n\nweekly_gas &lt;- weekly_gas_prices"
+  },
+  {
+    "objectID": "gas.html#the-data",
+    "href": "gas.html#the-data",
+    "title": "U.S. Weekly Gas Prices",
+    "section": "The Data",
+    "text": "The Data\nhttps://github.com/rfordatascience/tidytuesday/tree/main/data/2025/2025-07-01\nThe data is originally from the U.S. Energy Information Adminitrastion (EIA)\nThis week we’re exploring weekly US gas prices! The data comes from the U.S. Energy Information Administration (EIA), which publishes average retail gasoline and diesel prices each Monday. The original data (including additional datasets) can be found at eia.gov/petroleum/gasdiesel, and the weekly time series used here was downloaded from this XLS file.\n\nggplot(weekly_gas, aes(x=date, y=price, color=grade)) +\n  geom_line() + \n  facet_wrap(~grade)\n\n\n\n\n\n\n\n\n\nggplot(weekly_gas, aes(x=date, y=price, color=grade)) +\n  geom_line() + \n  facet_grid(~grade)\n\n\n\n\n\n\n\n\n\nggplot(weekly_gas, aes(x=date, y=price, color=fuel)) +\n  geom_line() + \n  facet_wrap(~fuel)"
   }
 ]

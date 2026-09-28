@@ -7,9 +7,15 @@ website:
   navbar:
     left:
       - href: index.qmd
-        text: Home
+        text: Home 
       - about.qmd
-      - dataviz.qmd
+      - text: "Data Viz"
+        menu:
+          - text: ""
+            href: docs/gas.html
+          - text: ""
+            href: 
+
 
 format:
   html:

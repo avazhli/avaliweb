@@ -1,0 +1,41 @@
+---
+title: "NSF Grant Terminations"
+description: Analysis of NSF grants terminated by the Trump Administration from TidyTuesday
+author: Ava Li
+datE: September 27, 2026
+format: html
+---
+
+```{r}
+#| echo: false
+library(tidyverse)
+library(openintro)
+```
+
+```{r}
+nsf_terminations <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-05-06/nsf_terminations.csv')
+
+nsf <- nsf_terminations
+```
+
+## The Data
+Retrieved from TidyTuesday:
+https://github.com/rfordatascience/tidytuesday/blob/main/data/2025/2025-05-06/readme.md
+
+The data was collected by Grant Watch through crowdsourcing from researchers and program administrators, as the administration has not released information on these terminations.
+
+The dataset includes information on grants for scientific research and education projects from the U.S. National Science Foundation (NSF) that have been terminated by the Trump administration in 2025.
+
+
+```{r}
+nsf <- nsf |> 
+    group_by(termination_letter_date) |> 
+    summarize(num = n())
+```
+
+Time Trends
+```{r}
+ggplot(nsf, aes(x=termination_letter_date)) +
+    geom_line()
+
+```
