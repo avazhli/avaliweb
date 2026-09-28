@@ -40,7 +40,6 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
@@ -94,19 +93,26 @@ ul.task-list li input[type="checkbox"] {
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav navbar-nav-scroll me-auto">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
     <a class="nav-link active" href="./index.html" aria-current="page"> 
 <span class="menu-text">Home</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
-<span class="menu-text">About</span></a>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-data-viz" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Data Viz</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-data-viz">    
+        <li>
+    <a class="dropdown-item" href="./nsf.html">
+ <span class="dropdown-text">NSF Grants</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./dataviz.html"> 
-<span class="menu-text">Data Viz</span></a>
+        <li>
+    <a class="dropdown-item" href="./gas.html">
+ <span class="dropdown-text">U.S. Gas Prices</span></a>
   </li>  
+    </ul>
+  </li>
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
@@ -118,46 +124,48 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
-    </div>
+    
 <!-- main -->
-<main class="content column-page" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-about-solana column-page">
+  <div class="about-entity">
+    <div class="entity-contents">
+      <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Ava Li</h1>
 </div>
-
-
-
 <div class="quarto-title-meta column-page">
-
-    
-  
-    
   </div>
-  
+</header> <div class="about-links">
+  <a href="https://www.linkedin.com/in/avazli/" class="about-link" rel="" target="_blank">
+     <span class="about-link-text">LinkedIn</span>
+  </a>
+  <a href="https://github.com/avazhli" class="about-link" rel="" target="_blank">
+     <span class="about-link-text">GitHub</span>
+  </a>
+  <a href="mailto:avalischools@gmail.com" class="about-link" rel="" target="">
+     <span class="about-link-text">Email</span>
+  </a>
+</div>
+      <div class="about-contents"><main class="content column-page" id="quarto-document-content">
+<div id="hero-heading">
+<p>Hello! I’m Ava Li, a sophomore at Scripps College studying Public Policy, Economics, and Data Science. I enjoy exploring the outdoors, drawing, trying out new baking recipes, and a variety of dance styles. I recently picked up Latin Ballroom dance!</p>
+<section id="education" class="level3">
+<h3 data-anchor-id="education">Education</h3>
+<p>Scripps College | Claremont, CA | Aug.&nbsp;2025 - May 2029<br>
+B.A. in Public Policy and Economics; Minor in Data Science</p>
 
 
-</header>
-
-
-<p>Here are some of my projects:</p>
-<p>View my Github Repo:</p>
-
-
-
-</main> <!-- /main -->
+</section>
+</div>
+</main></div>
+    </div>
+    <img src="ava_headshot_ds2.jpg" class="about-image
+  round " style="height: 15em; width: 15em;">
+  </div>
+</div>
+ <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
-    const icon = "";
-    const anchorJS = new window.AnchorJS();
-    anchorJS.options = {
-      placement: 'right',
-      icon: icon
-    };
-    anchorJS.add('.anchored');
     const isCodeAnnotation = (el) => {
       for (const clz of el.classList) {
         if (clz.startsWith('code-annotation-')) {                     

@@ -2,28 +2,26 @@
 title: "NSF Grant Terminations"
 description: Analysis of NSF grants terminated by the Trump Administration from TidyTuesday
 author: Ava Li
-datE: September 27, 2026
+date: September 27, 2026
 format: html
+code-fold: true
 ---
 
-```{r}
+```{r,message=FALSE,warning=FALSE}
 #| echo: false
 library(tidyverse)
 library(openintro)
-```
-```{r}
+
 nsf_terminations <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-05-06/nsf_terminations.csv')
 
 nsf <- nsf_terminations
 ```
 
 ## The Data
-Retrieved from TidyTuesday:
+Retrieved from TidyTuesday:   
 https://github.com/rfordatascience/tidytuesday/blob/main/data/2025/2025-05-06/readme.md
 
-The data was collected by Grant Watch through crowdsourcing from researchers and program administrators, as the administration has not released information on these terminations.
-
-The dataset includes information on grants for scientific research and education projects from the U.S. National Science Foundation (NSF) that have been terminated by the Trump administration in 2025.
+The dataset includes information on grants for scientific research and education projects from the U.S. National Science Foundation (NSF) that have been terminated by the Trump administration in 2025. The data was collected by Grant Watch through crowdsourcing from researchers and program administrators, as the administration has not released information on these terminations. 
 
 ```{r}
 nsf |> 
@@ -38,6 +36,7 @@ nsf |>
             x = "Termination date",
             y = "Number of terminated grants")
 ```
+<!--
 ```{r}
 nsf |> 
     group_by(termination_letter_date) |> 
@@ -50,17 +49,18 @@ nsf |>
             x = "Termination date",
             y = "Number of terminated grants")
 ```
-
+-->
 ```{r}
 nsf |> 
     filter(!is.na(division)) |> 
     group_by(division) |>
     summarize(num = n()) |> 
-    filter(num > 1) |> 
+    filter(num > 49) |> 
     ggplot(aes(x=num,y = fct_reorder(division, num)))+
         geom_col(fill = "#c84545") +
         labs(
             title = "NSF Grant Terminations by Division",
+            subtitle = "Divisions with over 50 terminations",
             x = "Number of Grants Terminated",
             y = NULL
         ) +
@@ -94,6 +94,22 @@ nsf |>
         labs(
             title = "NSF Grant Terminations by State",
             subtitle = "Top 16 States",
+            x = "Number of Grants Terminated",
+            y = NULL
+        ) +
+        theme_minimal()
+```
+```{r}
+nsf |> 
+    group_by(org_district) |> 
+    summarize(num = n()) |> 
+    arrange(desc(num)) |> 
+    slice_head(n = 20) |> 
+    ggplot(aes(x=num,y = fct_reorder(org_district, num)))+
+        geom_col(fill = "#b8622c") +
+        labs(
+            title = "NSF Grant Terminations by District",
+            subtitle = "Top 20 Districts",
             x = "Number of Grants Terminated",
             y = NULL
         ) +
@@ -155,22 +171,6 @@ ggplot(org_summary, aes(x = n_terminations, y = total_dollars)) +
   ) +
   theme_minimal()
 ```
-```{r}
-nsf |> 
-    group_by(org_district) |> 
-    summarize(num = n()) |> 
-    arrange(desc(num)) |> 
-    slice_head(n = 20) |> 
-    ggplot(aes(x=num,y = fct_reorder(org_district, num)))+
-        geom_col(fill = "#b8622c") +
-        labs(
-            title = "NSF Grant Terminations by District",
-            subtitle = "Top 20 Districts",
-            x = "Number of Grants Terminated",
-            y = NULL
-        ) +
-        theme_minimal()
-```
 
 ```{r}
 nsf |> 
@@ -187,8 +187,94 @@ nsf |>
     theme_void()
 ```
 
+
 ```{r}
-ggplot(nsf, aes(x=termination_letter_date, y=usaspending_obligated)) +
-    geom_point()
+cruz_counts <- nsf |>
+  group_by(in_cruz_list) |>
+  summarize(n_terminations = n())
+
+ggplot(cruz_counts, aes(x = in_cruz_list, y = n_terminations, fill = in_cruz_list)) +
+  geom_col(show.legend = FALSE) +
+  geom_text(aes(label = n_terminations), vjust = -0.4) +
+  labs(
+    title = "Terminated grants on Cruz's list vs. not",
+    x = "On Cruz's list",
+    y = "Number of terminated grants"
+  ) +
+  theme_minimal()
+
+weekly_cruz <- nsf |>
+  filter(!is.na(termination_letter_date)) |>
+  mutate(week = floor_date(termination_letter_date, unit = "week")) |>
+  group_by(week, in_cruz_list) |>
+  summarize(n_terminations = n(), .groups = "drop")
+
+ggplot(weekly_cruz, aes(x = week, y = n_terminations, color = in_cruz_list)) +
+  geom_line(linewidth = 0.8) +
+  geom_point() +
+  labs(
+    title = "Weekly terminations by Cruz-list status",
+    x = NULL,
+    y = "Number of terminated grants",
+    color = "On Cruz's\nlist"
+  ) +
+  theme_minimal()
+
+
 ```
 
+```{r}
+top_states <- nsf |>
+  filter(!is.na(org_state)) |>
+  group_by(org_state) |>
+  summarize(total = n()) |>
+  arrange(desc(total)) |>
+  slice_head(n = 15)
+
+# Step 2: count by state and list status, keeping only those 15 states
+state_cruz <- nsf |>
+  filter(!is.na(org_state)) |>
+  group_by(org_state, in_cruz_list) |>
+  summarize(n_terminations = n(), .groups = "drop") |>
+  inner_join(top_states, by = "org_state")
+
+ggplot(state_cruz, aes(x = n_terminations,
+                       y = fct_reorder(org_state, total),
+                       fill = in_cruz_list)) +
+  geom_col() +
+  labs(
+    title = "NSF terminations by state",
+    x = "Number of terminated grants",
+    y = NULL,
+    fill = "On Cruz's\nlist"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+top_states <- nsf |>
+  filter(!is.na(org_name)) |>
+  group_by(org_name) |>
+  summarize(total = n()) |>
+  arrange(desc(total)) |>
+  slice_head(n = 15)
+
+# Step 2: count by state and list status, keeping only those 15 states
+state_cruz <- nsf |>
+  filter(!is.na(org_name)) |>
+  group_by(org_name, in_cruz_list) |>
+  summarize(n_terminations = n(), .groups = "drop") |>
+  inner_join(top_states, by = "org_name")
+
+ggplot(state_cruz, aes(x = n_terminations,
+                       y = fct_reorder(org_name, total),
+                       fill = in_cruz_list)) +
+  geom_col() +
+  labs(
+    title = "NSF terminations by state",
+    x = "Number of terminated grants",
+    y = NULL,
+    fill = "On Cruz's\nlist"
+  ) +
+  theme_minimal()
+```

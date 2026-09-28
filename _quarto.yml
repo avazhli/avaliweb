@@ -5,10 +5,9 @@ project:
 website:
   title: "Ava Li"
   navbar:
-    left:
+    right:
       - href: index.qmd
         text: Home 
-      - about.qmd
       - text: "Data Viz"
         menu:
           - text: "NSF Grants"
