@@ -11,7 +11,7 @@ about:
           href: https://www.linkedin.com/in/avazli/
           target: _blank
         - text: GitHub
-          href: https://github.com/avazhli
+          href: https://github.com/avazhli/avaliweb
           target: _blank
         - text: Email
           href: mailto:avalischools@gmail.com

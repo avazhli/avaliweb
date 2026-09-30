@@ -22,20 +22,23 @@ https://github.com/rfordatascience/tidytuesday/tree/main/data/2025/2025-07-01
 
 The data is originally from the U.S. Energy Information Administration (EIA), which publishes average retail gasoline and diesel prices weekly.
 
-Prices over time basic comparison
+
+### Basic Prices Overtime Comparison
 ```{r}
-ggplot(weekly_gas, aes(x=date, y=price, color=fuel)) +
-  geom_line() + 
-  labs(title = "Fuel Price Overtime")
+ggplot(weekly_gas, aes(x=date, y=price, color=fct_relevel(fuel, "gasoline", "diesel"))) +
+  geom_line() +
+  scale_color_manual(values = c("gasoline" = "#438eff", "diesel" = "#f6ba21")) +
+  labs(title = "Fuel Price Overtime", color = "Fuel")
 ```
 
+<!--
 ```{r}
 ggplot(weekly_gas, aes(x=date, y=price, color=fuel)) +
   geom_line() + 
   facet_wrap(~fuel) + 
   labs(title = "Fuel Price Overtime by Fuel")
 ```
-
+-->
 <!--
 Prices by Grade (ALL)
 ```{r}
@@ -52,14 +55,15 @@ ggplot(weekly_gas, aes(x=date, y=price, color=grade)) +
 ```
 -->
 
-Prices by Fuel Type and Grade
+
+### Prices by Fuel Type, Grade, and Formulation
 ```{r}
 weekly_gas |> 
   filter(fuel == "gasoline") |> 
   ggplot(aes(x=date, y=price, color=grade)) +
     geom_line() + 
     facet_wrap(~grade) + 
-    labs(title = "Prices for Gasoline")
+    labs(title = "Prices for Gasoline by Grade")
 ```
 
 ```{r}
@@ -68,10 +72,9 @@ weekly_gas|>
   ggplot( aes(x=date, y=price, color=grade)) +
     geom_line() + 
     facet_wrap(~grade) + 
-    labs(title = "Prices for Diesel")
+    labs(title = "Prices for Diesel by Grade")
 ```
 
-Prices by Formulation of Gasoline
 ```{r}
 weekly_gas |> 
   filter(fuel == "gasoline") |> 
@@ -82,11 +85,12 @@ weekly_gas |>
     title = "Prices by Formulation", x = "Date", y= "Price",  color = "Formulation" )
 ```
 
-Volatility/Price distribution
+
+### Price Distribution
 ```{r}
-ggplot(weekly_gas, aes(x=price, color = fuel)) +
-    geom_histogram() + 
-    labs(title = "Distribution of Price Changes by Fuel")
+ggplot(weekly_gas, aes(x=price, fill = fct_relevel(fuel, "gasoline", "diesel"))) +
+    geom_histogram(binwidth = 0.1) + 
+    labs(title = "Distribution of Price Changes by Fuel", fill = "Fuel")
 ```
 
 ```{r}
