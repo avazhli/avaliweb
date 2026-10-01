@@ -2,7 +2,7 @@
 title: "NSF Grant Terminations"
 description: Analysis of NSF grants terminated by the Trump Administration from TidyTuesday
 author: Ava Li
-date: September 27, 2026
+date: September 30, 2026
 format: html
 code-fold: true
 ---
