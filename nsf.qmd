@@ -142,7 +142,6 @@ ggplot(top_orgs, aes(x = total_dollars, y = fct_reorder(org_name, total_dollars)
   theme_minimal()
 ```
 
-<!--
 ```{r}
 nsf |> 
     group_by(org_state) |> 
@@ -159,7 +158,6 @@ nsf |>
         ) +
         theme_minimal()
 ```
--->
 
 ```{r}
 top_states <- nsf |> 
@@ -168,11 +166,11 @@ top_states <- nsf |>
   summarize(total = n()) |> 
   arrange(desc(total)) |> 
   slice_head(n=16)
+
 cruz_states <- nsf |>
   filter(!is.na(org_state)) |>
   group_by(org_state, in_cruz_list) |>
-  summarize(n_terminations = n()) |> 
-  ungroup()|>
+  summarize(n_terminations = n(), .groups = "drop") |> 
   inner_join(top_states, by = "org_state")
 
 ggplot(cruz_states, aes(x = n_terminations,
@@ -180,7 +178,7 @@ ggplot(cruz_states, aes(x = n_terminations,
                        fill = in_cruz_list))+
         geom_col() +
         labs(
-            title = "NSF Terminations by State",
+            title = "NSF Terminations by State Against Cruz's List",
             subtitle = "Top 16 States",
             x = "Number of Grants Terminated",
             y = NULL, fill = "On Cruz's List"
@@ -194,7 +192,8 @@ nsf |>
     summarize(num = n()) |> 
     ggplot(aes(x=in_cruz_list, y=num, fill = in_cruz_list)) +
         geom_col() +
-        labs(title = "Grant Terminations on Cruz's List", x = "On Cruz's List", y = "Number of Grants Terminated", fill = "Cruz's List")
+        geom_text(aes(label=num), vjust = -0.2) +
+        labs(title = "Grant Terminations on Cruz's List", x = "On Cruz's List", y = "Number of Grants Terminated", fill = "Cruz's List") + theme_minimal()
 ```
 <!--
 ```{r}
