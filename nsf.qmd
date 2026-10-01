@@ -188,6 +188,14 @@ ggplot(cruz_states, aes(x = n_terminations,
         theme_minimal()
 ```
 
+```{r}
+nsf |> 
+    group_by(in_cruz_list) |> 
+    summarize(num = n()) |> 
+    ggplot(aes(x=in_cruz_list, y=num, fill = in_cruz_list)) +
+        geom_col() +
+        labs(title = "Grant Terminations on Cruz's List", x = "On Cruz's List", y = "Number of Grants Terminated", fill = "Cruz's List")
+```
 <!--
 ```{r}
 nsf |> 
